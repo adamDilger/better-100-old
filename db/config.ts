@@ -11,6 +11,10 @@ const Vote = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     personId: column.number({ references: () => Person.columns.id }),
+    title: column.text(),
+    videoId: column.text(),
+    playedOn: column.date({ optional: true }),
+    sort: column.number(),
   },
 });
 
