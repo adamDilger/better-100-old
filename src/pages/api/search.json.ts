@@ -20,13 +20,18 @@ async function queryYoutube(search: string) {
   up.append("part", "id,snippet");
   up.append("q", decodeURIComponent(search));
   up.append("type", "video");
-  // up.append("key", "YOUR_API_KEY");
+  up.append("key", import.meta.env.YOUTUBE_API_KEY);
 
   const url = "https://www.googleapis.com/youtube/v3/search?" +
     up.toString();
 
   console.log(url);
   const res = await fetch(url);
+  if (!res.ok) {
+    console.error(`Failed to query youtube: ${res.status} ${res.statusText}`);
+    throw new Error(`Failed to query youtube: ${res.status} ${res.statusText}`);
+  }
+
   const data: YoutubeResponse = await res.json();
 
   if (!data.items || data.items.length === 0) {
