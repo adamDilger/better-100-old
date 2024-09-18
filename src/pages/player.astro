@@ -6,18 +6,33 @@ import Layout from '../layouts/Layout.astro';
   <main class="flex flex-col container mx-auto h-full py-7">
 		<div class="relative">
 			<h1 class="text-4xl font-bold text-center text-red-600 mb-4">better 100</h1>
-			<div class="absolute top-0 right-0 bg-white px-3">
-				<div class="text-4xl font-bold text-red-500" id="count"></div>
-			</div>
 		</div>
 
-		<div class="flex flex-col justify-center items-center">
+		<div class="flex-1 flex justify-center items-center">
+			<button id="start-btn" class="text-5xl bg-red-500 text-white px-14 py-3 rounded-lg">
+				Start the Count!
+			</button>
+		</div>
+
+		<div class="flex flex-col justify-center items-center relative" style="display: none">
+			<div class="top-0 bottom-0 right-0 left-0 bg-black absolute flex items-center justify-center font-extrabold text-white showing" id="main-count" style="font-size: 100px">
+			</div>
+
+			<div class="absolute top-6 right-6 bg-white px-3 rounded">
+				<div class="text-4xl font-bold text-red-500" id="top-count"></div>
+			</div>
+
 			<div id="player" style="height: 80vh; width: 100%"></div>
 			<p id="voted-by" class="text-lg font-light mt-3"></p>
 		</div>
 
-
     <script>
+			document.getElementById('start-btn')!.addEventListener('click', async () => {
+				document.getElementById('start-btn')!.parentElement!.style.display = 'none';
+				document.getElementById('player')!.parentElement!.style.display = 'block';
+				firstSong();
+			});
+
       // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
 
@@ -35,8 +50,8 @@ import Layout from '../layouts/Layout.astro';
           width: '640',
 					// videoId: 'ipe8cfJNt_o',
 					playerVars: {
-						// playsinline: 1,
-						// controls: 0,
+						playsinline: 1,
+						controls: 0,
 						rel: 0,
 						enablejsapi: 1
 					},
@@ -50,8 +65,6 @@ import Layout from '../layouts/Layout.astro';
       // 4. The API will call this function when the video player is ready.
 			async function onPlayerReady(_event: any) {
 				console.log('onPlayerReady');
-				const firstSong = await nextSong();
-				update(firstSong);
       }
 
       // 5. The API calls this function when the player's state changes.
@@ -71,19 +84,14 @@ import Layout from '../layouts/Layout.astro';
         }
       }
 
-			async function nextSong() {
-				const  res = await fetch('/api/vote/next.json');
+			async function firstSong() {
+				const res = await fetch('/api/vote/next.json');
 				const data = await res.json() as Vote;
 				console.log(data);
-
-				return data;
+				update(data);
 			}
 
-			/**
-			 * Mark the current vote as complete
-			 * @returns {Promise<Vote>}
-			 */
-			async function markComplete() {
+			async function markComplete(): Promise<Vote> {
 				const  res = await fetch('/api/vote/complete.json');
 				const data = await res.json() as Vote;
 				console.log(data);
@@ -99,13 +107,52 @@ import Layout from '../layouts/Layout.astro';
 				count: number;
 			}
 
-			function update(vote: Vote) {
+			async function update(vote: Vote) {
 				console.log('update', vote);
-				player.loadVideoById(vote.videoId);
 				document.getElementById('voted-by')!.innerText = `Voted by ${vote.personName}`;
-				document.getElementById('count')!.innerText = vote.count.toString();
+				document.getElementById('top-count')!.innerText = vote.count.toString();
+
+				const bt = document.getElementById('main-count')!;
+				bt.innerText = vote.count.toString();
+				bt.classList.add('showing')
+				setTimeout(() => bt!.classList.remove('showing'), 1000);
+
+				await speakNumber(vote.count);
+
+				player.loadVideoById(vote.videoId);
+			}
+
+			const voices = window.speechSynthesis.getVoices();
+			async function speakNumber(i: number) {
+				let msg = new SpeechSynthesisUtterance();
+				msg.voice = voices[1];
+				msg.text = 'Number ' + i;
+				msg.lang = 'en-US';
+				
+				speechSynthesis.speak(msg);
+
+				await (new Promise<void>((res) => {
+					msg.onend = function(e) {
+						console.log('Finished in ' + e.elapsedTime + ' seconds.');
+						res();
+					}
+				}));
 			}
     </script>
 
 	</main>
 </Layout>
+
+<style>
+#main-count {
+	height: 80vh;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 2s;
+}
+
+#main-count.showing {
+	opacity: 1;
+	transition: opacity 0s;
+}
+</style>
