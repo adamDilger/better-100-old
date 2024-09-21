@@ -1,5 +1,13 @@
 import { column, defineDb, defineTable } from "astro:db";
 
+const Event = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    code: column.text(),
+    name: column.text(),
+  },
+});
+
 const Person = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
@@ -10,9 +18,12 @@ const Person = defineTable({
 const Vote = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
+    eventId: column.number({ references: () => Event.columns.id }),
     personId: column.number({ references: () => Person.columns.id }),
     title: column.text(),
     videoId: column.text(),
+    thumbnailUrl: column.text(),
+    thumbnailLgUrl: column.text(),
     playedOn: column.date({ optional: true }),
     sort: column.number(),
   },
@@ -21,6 +32,7 @@ const Vote = defineTable({
 // https://astro.build/db/config
 export default defineDb({
   tables: {
+    Event,
     Person,
     Vote,
   },

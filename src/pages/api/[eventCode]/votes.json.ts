@@ -1,13 +1,14 @@
 import type { APIRoute } from "astro";
-import { db, Person, Vote } from "astro:db";
+import { db, eq, Event, Person, Vote } from "astro:db";
 
 type YoutubeItem = {
   id: string;
   title: string;
-  thumbnail: string;
+  thumbnailUrl: string;
+  thumbnailLgUrl: string;
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ params, request }) => {
   const body = await request.json() as { name: string; votes: YoutubeItem[] };
   console.log(body);
 
@@ -22,6 +23,17 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(
       JSON.stringify({ message: "No votes provided" }),
       { status: 400 },
+    );
+  }
+
+  const event = (await db.select().from(Event).where(
+    eq(Event.code, params.eventCode!.toUpperCase()),
+  ))[0];
+
+  if (!event) {
+    return new Response(
+      JSON.stringify({ message: "Event not found" }),
+      { status: 404 },
     );
   }
 
@@ -42,7 +54,10 @@ export const POST: APIRoute = async ({ request }) => {
     body.votes.map((v) => ({
       sort: Math.floor(Math.random() * 10000000),
       personId: Number(person.lastInsertRowid),
+      eventId: event.id,
       title: v.title,
+      thumbnailUrl: v.thumbnailUrl,
+      thumbnailLgUrl: v.thumbnailLgUrl,
       videoId: v.id,
       playedOn: null,
     })),

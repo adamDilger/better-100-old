@@ -41,7 +41,8 @@ async function queryYoutube(search: string) {
   return data.items.map((i) => ({
     id: i.id.videoId,
     title: i.snippet.title,
-    thumbnail: i.snippet.thumbnails.default.url,
+    thumbnailUrl: i.snippet.thumbnails.default.url,
+    thumbnailLgUrl: i.snippet.thumbnails.high.url,
   }));
 }
 

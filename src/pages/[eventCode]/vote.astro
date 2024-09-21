@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SearchForm from "../../components/SearchForm.tsx";
+
+const { eventCode } = Astro.params;
+---
+
+<Layout title="Welcome to Astro.">
+  <main class="flex flex-col container mx-auto h-full py-7">
+		<SearchForm client:only="solid-js" eventCode={eventCode!} />
+	</main>
+</Layout>

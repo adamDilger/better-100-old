@@ -1,34 +1,35 @@
-import { db, Person, Vote } from "astro:db";
+import { db, Event, Person, Vote } from "astro:db";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  await db.insert(Person).values([
-    { id: 1, name: "Adam" },
-    { id: 2, name: "Jack" },
-    { id: 3, name: "Alex" },
+  await db.insert(Event).values([
+    { id: 1, code: "ABCDE", name: `Alex's Bucks` },
   ]);
 
-  await db.insert(Vote).values([
-    {
-      id: 1,
-      personId: 2,
-      title: "Charli xcx - Apple",
-      videoId: "ipe8cfJNt_o",
-      sort: Math.floor(Math.random() * 100000000),
-    },
-    {
-      id: 2,
-      personId: 1,
-      title: "Fontaines D.C. - Bug",
-      videoId: "OxBflEDvf-o",
-      sort: Math.floor(Math.random() * 100000000),
-    },
-    {
-      id: 3,
-      personId: 3,
-      title: "King Gizzard & The Lizard Wizard - Sleep Drifter",
-      videoId: "U72rbtrufws",
-      sort: Math.floor(Math.random() * 100000000),
-    },
-  ]);
+  await db.insert(Person).values([]);
+  await db.insert(Vote).values([]);
 }
+
+// {
+//   name: 'adam',
+//   votes: [
+//     {
+//       id: 'q3zqJs7JUCQ',
+//       title: 'Taylor Swift - Fortnight (feat. Post Malone) (Official Music Video)',
+//       thumbnailUrl: 'https://i.ytimg.com/vi/q3zqJs7JUCQ/default.jpg',
+//       thumbnailLgUrl: 'https://i.ytimg.com/vi/q3zqJs7JUCQ/hqdefault.jpg'
+//     },
+//     {
+//       id: 'Sl6en1NPTYM',
+//       title: 'Taylor Swift - I Can Do It With A Broken Heart (Official Video)',
+//       thumbnailUrl: 'https://i.ytimg.com/vi/Sl6en1NPTYM/default.jpg',
+//       thumbnailLgUrl: 'https://i.ytimg.com/vi/Sl6en1NPTYM/hqdefault.jpg'
+//     },
+//     {
+//       id: '852A78TnZGM',
+//       title: 'Taylor',
+//       thumbnailUrl: 'https://i.ytimg.com/vi/852A78TnZGM/default.jpg',
+//       thumbnailLgUrl: 'https://i.ytimg.com/vi/852A78TnZGM/hqdefault.jpg'
+//     }
+//   ]
+// }

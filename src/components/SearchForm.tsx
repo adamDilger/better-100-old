@@ -11,14 +11,15 @@ import {
 type YoutubeItem = {
   id: string;
   title: string;
-  thumbnail: string;
+  thumbnailUrl: string;
+  thumbnailLgUrl: string;
 };
 
 const MAX_VOTE_COUNT = 3;
 
 let nameInput: HTMLInputElement | undefined;
 
-export default function Form() {
+export default function Form(props: { eventCode: string }) {
   const [error, setError] = createSignal<string | null>(null);
   const [searching, setSearching] = createSignal(false);
   const [search, setSearch] = createSignal("");
@@ -68,7 +69,7 @@ export default function Form() {
 
   async function submitVotes() {
     setSubmitting(true);
-    const res = await fetch("/api/votes.json", {
+    const res = await fetch(`/api/${props.eventCode}/votes.json`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -86,7 +87,7 @@ export default function Form() {
     }
 
     window.localStorage.setItem("voted", "true");
-    navigate("/tnx");
+    navigate(`/${props.eventCode}/tnx`);
   }
 
   return (
@@ -158,7 +159,7 @@ export default function Form() {
                   <div class="flex items-center space-between bg-white/80">
                     <div class="flex items-center flex-1">
                       <img
-                        src={i.thumbnail}
+                        src={i.thumbnailUrl}
                         style="max-width: 100px"
                         class="rounded-l p-3"
                       />

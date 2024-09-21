@@ -1,6 +1,17 @@
 import { createSignal, onMount, Show } from "solid-js";
 
-export default function Player() {
+type PlayerVote = {
+  id: number;
+  title: string;
+  videoId: string;
+  thumbnailUrl: string;
+  thumbnailLgUrl: string;
+  personName: string;
+
+  count: number;
+};
+
+export default function Player(props: { eventCode: string }) {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [countdownStarted, setCountdownStarted] = createSignal(false);
   const [voteCount, setVoteCount] = createSignal(0);
@@ -49,14 +60,14 @@ export default function Player() {
   }
 
   async function firstSong() {
-    const res = await fetch("/api/vote/next.json");
-    const data = await res.json() as Vote;
+    const res = await fetch(`/api/player/${props.eventCode}/next.json`);
+    const data = await res.json();
     update(data);
   }
 
-  async function markComplete(): Promise<Vote> {
-    const res = await fetch("/api/vote/complete.json");
-    const data = await res.json() as Vote;
+  async function markComplete(): Promise<PlayerVote> {
+    const res = await fetch(`/api/player/${props.eventCode}/complete.json`);
+    const data = await res.json();
     return data;
   }
 
@@ -65,7 +76,7 @@ export default function Player() {
     firstSong();
   }
 
-  async function update(vote: Vote) {
+  async function update(vote: PlayerVote) {
     setVoteCount(vote.count);
     setVotePersonName(vote.personName);
 
@@ -130,11 +141,3 @@ export default function Player() {
     </main>
   );
 }
-
-type Vote = {
-  id: number;
-  title: string;
-  videoId: string;
-  personName: string;
-  count: number;
-};

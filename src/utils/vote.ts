@@ -1,15 +1,34 @@
-import { count, db, eq, isNull, Person, sql, Vote } from "astro:db";
+import { and, count, db, eq, Event, isNull, Person, Vote } from "astro:db";
 
-export async function getNextVote() {
+export type PlayerVote = {
+  id: number;
+  title: string;
+  videoId: string;
+  thumbnailUrl: string;
+  thumbnailLgUrl: string;
+  personName: string;
+
+  count: number;
+};
+
+export async function getNextVote(eventCode: string): Promise<PlayerVote> {
   const votes = await db.select({
     id: Vote.id,
     title: Vote.title,
     videoId: Vote.videoId,
+    thumbnailUrl: Vote.thumbnailUrl,
+    thumbnailLgUrl: Vote.thumbnailLgUrl,
     personName: Person.name,
   })
     .from(Vote)
     .innerJoin(Person, eq(Vote.personId, Person.id))
-    .where(isNull(Vote.playedOn))
+    .innerJoin(Event, eq(Vote.eventId, Event.id))
+    .where(
+      and(
+        isNull(Vote.playedOn),
+        eq(Event.code, eventCode.toUpperCase()),
+      ),
+    )
     .limit(1)
     .orderBy(Vote.sort);
 

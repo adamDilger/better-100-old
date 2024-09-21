@@ -1,10 +1,12 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import YtPlayer from '../components/YtPlayer.tsx';
+import Layout from '../../layouts/Layout.astro';
+import YtPlayer from '../../components/YtPlayer.tsx';
+
+const { eventCode } = Astro.params;
 ---
 
-<Layout title="Better 100">
-	<YtPlayer client:only />
+<Layout title="better 100">
+	<YtPlayer client:only="solid-js" eventCode={eventCode!} />
 </Layout>
 
 <script>
