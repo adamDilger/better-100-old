@@ -5,6 +5,8 @@ const Event = defineTable({
     id: column.number({ primaryKey: true }),
     code: column.text(),
     name: column.text(),
+    started: column.date({ optional: true }),
+    maxVoteCount: column.number({ default: 5 }),
   },
 });
 

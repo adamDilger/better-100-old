@@ -1,44 +1,36 @@
 ---
-import { db, Vote, Person } from "astro:db";
 import Layout from "../layouts/Layout.astro";
-import { isNotNull, eq } from "astro:db";
-import { desc } from "astro:db";
-
-const played = await db
-	.select({
-		voterName: Person.name,
-		title: Vote.title,
-		thumbnailUrl: Vote.thumbnailUrl,
-	})
-	.from(Vote)
-	.innerJoin(Person, eq(Person.id, Vote.personId))
-	.where(isNotNull(Vote.playedOn))
-	.orderBy(desc(Vote.playedOn));
 ---
 
 <Layout title="better 100">
-	<h2 class="text-center text-2xl font-light pt-10 pb-4">Played songs</h2>
+	<h2 class="text-center text-2xl font-light pt-10 pb-8">Host your own <span class="	"><s>Hottest</s></span> Better 100</h2>
 
-	<div class="divide-y divide-red-400 gap-5 px-8">
-		{
-			played.length === 0 && (
-				<div class="text-center text-2xl font-light pt-10 pb-4">TBD</div>
-			)
-		}
+	<div class="gap-5 px-8 text-center">
+		<ol class="list-decimal text-lg gap-4 list-inside mb-6">
+			<li>Create a better 100 code</li>
+			<li>Share the voting link</li>
+			<li>Wait for the voting to finish</li>
+			<li>Start the countdown</li>
+		</ol>
 
-		{
-			played.map((vote, i) => (
-				<div class="flex items-center py-3">
-					<div class="text-4xl pr-5 font-bold text-red-500">{i + 24}</div>
-					<div class="">
-						<div>
-							<img src={vote.thumbnailUrl} class="w-20 h-20" />
-						</div>
-						<div class="text-lg font-bold">{vote.title}</div>
-						<div class="text-sm">{vote.voterName}</div>
-					</div>
-				</div>
-			))
-		}
+		<a href="/new">
+			<button class="bg-red-500 px-4 py-2 rounded border-red-700 text-red-100 font-bold mb-8">
+				Create a new code
+			</button>
+		</a>
+
+		<a href="/search">
+			<button class="bg-cyan-700 px-4 py-2 rounded border-red-700 text-red-100 font-bold mb-8">
+				Go to your Countdown
+			</button>
+		</a>
+
+		<hr />
+
+		<h3 class="mb-4 mt-6 font-bold">How are the votes ordered?</h3>
+		<p class="mt-5">Each vote is assigned a random number, which will create the Countdown</p>
+
+		<h3 class="mb-4 mt-6 font-bold">Where do the songs come from?</h3>
+		<p class="mt-5 mb-6">The voting page will allow you to select a song from YouTube</p>
 	</div>
 </Layout>

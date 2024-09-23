@@ -1,0 +1,141 @@
+---
+import { db, Event } from "astro:db";
+import Layout from "../layouts/Layout.astro";
+
+if (Astro.request.method === "POST") {
+	let eventName = "";
+	let maxVoteCount = 5;
+
+	try {
+		const data = await Astro.request.formData();
+		const n = data.get("eventName");
+		if (!n || typeof n !== "string" || n.length < 4 || n.length > 30) {
+			throw new Error("Invalid event name");
+		}
+
+		const mvc = data.get("maxVoteCount");
+		if (!mvc || typeof mvc !== "string") {
+			throw new Error("Invalid max vote count");
+		}
+
+		eventName = n;
+		maxVoteCount = parseInt(mvc, 10);
+
+		if (isNaN(maxVoteCount) || maxVoteCount < 1 || maxVoteCount > 10) {
+			throw new Error("Invalid max vote count");
+		}
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(error.message);
+		}
+
+		Astro.response.status = 400;
+		return;
+	}
+
+	const code = makeCode();
+	try {
+		await db
+			.insert(Event)
+			.values({ code, name: eventName, maxVoteCount: maxVoteCount })
+			.execute();
+		console.log("Event created:", eventName, code);
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error(`Failed to create event: ${eventName}`, error.message);
+		}
+
+		Astro.response.status = 500;
+		return;
+	}
+
+	return Astro.redirect(`${code}/new`);
+}
+
+function makeCode(length = 5) {
+	let result = "";
+	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const charactersLength = characters.length;
+
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+
+	return result;
+}
+---
+
+<Layout title="better 100">
+	<h2 class="text-center text-2xl font-light pt-10 pb-8">
+		Host your own <span><s>Hottest</s></span> Better 100
+	</h2>
+
+	<form class="flex flex-col gap-4 justify-center mx-8" method="POST">
+		<input
+			class="py-2 px-2 border rounded"
+			name="eventName"
+			placeholder="Event name"
+			required
+			maxlength="30"
+			minlength="4"
+		/>
+
+		<input
+			class="px-2 border rounded hidden"
+			name="maxVoteCount"
+			placeholder="Event name"
+			type="number"
+			value="5"
+			required
+			max="10"
+			min="1"
+		/>
+
+		<div>
+			<div class="text-center">
+				<label class="text-sm" for="maxVoteCount"> Max votes per person </label>
+			</div>
+
+			<div class="flex justify-center py-4">
+				<button
+					id="decrease"
+					type="button"
+					class="h-10 w-10 bg-gray-200 rounded">-</button
+				>
+				<div id="max-votes" class="text-4xl font-bold px-8">5</div>
+				<button
+					id="increase"
+					type="button"
+					class="h-10 w-10 bg-gray-200 rounded">+</button
+				>
+			</div>
+		</div>
+
+		<div class="text-center">
+			<button
+				class="bg-red-500 px-12 py-2 rounded border-red-700 text-red-100 font-bold"
+				type="submit"
+			>
+				Create event
+			</button>
+		</div>
+	</form>
+
+	<script>
+		const maxVotes = document.querySelector("#max-votes")!;
+
+		document.querySelector("#increase")!.addEventListener("click", () => {
+			const value = parseInt(maxVotes.textContent || "5", 10);
+			if (value < 10) {
+				maxVotes.textContent = String(value + 1);
+			}
+		});
+
+		document.querySelector("#decrease")!.addEventListener("click", () => {
+			const value = parseInt(maxVotes.textContent || "5", 10);
+			if (value > 1) {
+				maxVotes.textContent = String(value - 1);
+			}
+		});
+	</script>
+</Layout>

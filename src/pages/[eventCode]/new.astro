@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const eventCode = Astro.params.eventCode as string;
+---
+
+<Layout title="better 100">
+	<div class="mx-8">
+		<h2 class="text-center text-2xl font-light pt-10 pb-4">Event created!</h2>
+
+		<div class="text-center text-2xl font-light pt-8 pb-4">
+			Your event code is: <span class="text-red-500 font-bold">{eventCode}</span
+			>
+		</div>
+
+		<div class="text-center pt-4 pb-4">
+			Make sure to save your event code somewhere, as that's what you'll have to
+			use to start the countdown.
+		</div>
+
+		<div class="text-center">
+			<h3 class="text-lg mt-3 mb-4">Voting Link:</h3>
+
+			<span class="underline italic">better100.dilger.co/{eventCode}/vote</span>
+			<button
+				id="copy-to-clipboard"
+				class="bg-cyan-700 px-2 py-1 text-white rounded ml-2">Copy</button
+			>
+		</div>
+
+
+		<div class="text-center mt-12">
+			<div class="mb-4">When  you're ready to start the countdown</div>
+
+			<span class="underline italic">better100.dilger.co/{eventCode}/countdown</span>
+			<button
+				id="copy-to-clipboard"
+				class="bg-cyan-700 px-2 py-1 text-white rounded ml-2">Copy</button
+			>
+		</div>
+	</div>
+
+	<script define:vars={{ eventCode }} is:inline>
+		const copyButton = document.getElementById("copy-to-clipboard");
+
+		copyButton.addEventListener("click", async () => {
+			await navigator.clipboard.writeText(
+				`https://better100.dilger.co/${eventCode}/vote`,
+			);
+			copyButton.textContent = "Copied!";
+		});
+	</script>
+</Layout>
