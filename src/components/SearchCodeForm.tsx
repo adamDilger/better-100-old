@@ -1,14 +1,48 @@
-export default function SearchCodeForm() {
-  const searchForm = document.querySelector<HTMLFormElement>("#search-form")!;
+import { createSignal, Show } from "solid-js";
 
-  function onSubmit(e) {
+export default function SearchCodeForm() {
+  const [code, setCode] = createSignal("");
+  const [searching, setSearching] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
+
+  async function onSubmit(e: SubmitEvent) {
+    setError(null);
+
     e.preventDefault();
     console.log(e);
 
+    setSearching(true);
     // // get data from the form
-    // const formData = new FormData(searchForm);
-    // console.log(formData);
-    // console.log(formData.get("code"));
+    const formData = new FormData(e.target as HTMLFormElement);
+    console.log(formData);
+    console.log(formData.get("code"));
+
+    try {
+      const res = await fetch(
+        "/api/search-code.json?code=" + encodeURIComponent(code()),
+      );
+
+      if (res.status === 404) {
+        setError("Code not found");
+        setSearching(false);
+        return;
+      }
+
+      if (!res.ok) {
+        setError("Failed to search for code");
+        throw new Error(
+          `Failed to submit search: ${res.status} ${res.statusText}`,
+        );
+      }
+
+      const data = (await res.json()) as { code: string; name: string };
+      window.location.href = data.code;
+    } catch (e) {
+      console.error(e);
+      setError("Failed to search for code");
+    } finally {
+      setSearching(false);
+    }
   }
 
   return (
@@ -17,15 +51,35 @@ export default function SearchCodeForm() {
         What's the code to your better 100 countdown?
       </div>
 
-      <form id="search-form" onSubmit={onSubmit}>
+      <form
+        id="search-form"
+        onSubmit={onSubmit}
+        class="flex gap-2 mb-8 mx-8 items-center"
+      >
         <input
-          class="px-4 py-2 border rounded"
           name="code"
           placeholder="ABCD"
           maxlength="4"
           minlength="4"
+          class="p-2 rounded flex-1 border-2 border-gray-300"
+          value={code()}
+          onChange={(e) => setCode((e.target as HTMLInputElement).value)}
+          autocomplete="eventCode"
         />
+
+        <button
+          class="py-2 px-3 bg-cyan-700 active:bg-cyan-800 text-white disabled:bg-cyan-600/30 rounded"
+          type="submit"
+        >
+          <Show when={searching()} fallback="Search">
+            Searching...
+          </Show>
+        </button>
       </form>
+
+      <Show when={error()}>
+        <div class="bg-red-100 text-red-800 p-4 text-center">{error()}</div>
+      </Show>
     </div>
   );
 }

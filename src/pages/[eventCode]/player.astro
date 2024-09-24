@@ -1,12 +1,12 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import YtPlayer from '../../components/YtPlayer.tsx';
+import Layout from "../../layouts/Layout.astro";
+import YtPlayer from "../../components/YtPlayer.tsx";
 
 const { eventCode } = Astro.params;
 ---
 
 <Layout title="better 100">
-	<YtPlayer client:only="solid-js" eventCode={eventCode!} />
+  <YtPlayer client:only="solid-js" eventCode={eventCode!} />
 </Layout>
 
 <script>
@@ -17,15 +17,15 @@ const { eventCode } = Astro.params;
 </script>
 
 <style is:global>
-.number-overlay {
-	height: 80vh;
-	pointer-events: none;
-	opacity: 0;
-	transition: opacity 2s;
-}
+  .number-overlay {
+    height: 80vh;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s;
+  }
 
-.number-overlay.showing {
-	opacity: 1;
-	transition: opacity 0s;
-}
+  .number-overlay.showing {
+    opacity: 1;
+    transition: opacity 0s;
+  }
 </style>

@@ -29,10 +29,8 @@ export default function Form(props: { eventCode: string }) {
 
   const [name, setName] = createSignal("");
 
-  const [
-    responseMessage,
-    setResponseMessage,
-  ] = createSignal<Array<YoutubeItem> | null>(null);
+  const [responseMessage, setResponseMessage] =
+    createSignal<Array<YoutubeItem> | null>(null);
 
   async function doSearch() {
     setSearching(true);
@@ -134,7 +132,8 @@ export default function Form(props: { eventCode: string }) {
                   class="p-2 rounded flex-1 border-2 border-gray-300"
                   value={search()}
                   onInput={(e) =>
-                    setSearch((e.target as HTMLInputElement).value)}
+                    setSearch((e.target as HTMLInputElement).value)
+                  }
                   onKeyUp={(e) => e.key === "Enter" && doSearch()}
                   autocomplete="off"
                 />
@@ -184,13 +183,12 @@ export default function Form(props: { eventCode: string }) {
                 <VoteSummary
                   votes={votes()}
                   removeVote={(i) =>
-                    setVotes(votes().filter((v) => v.id !== i.id))}
+                    setVotes(votes().filter((v) => v.id !== i.id))
+                  }
                 />
 
                 <div class="flex flex-col items-center mt-5">
-                  <p class="font-bold text-lg">
-                    These are your votes.
-                  </p>
+                  <p class="font-bold text-lg">These are your votes.</p>
 
                   <div class="mt-4">
                     <button
@@ -207,7 +205,8 @@ export default function Form(props: { eventCode: string }) {
                 <VoteSummary
                   votes={votes()}
                   removeVote={(i) =>
-                    setVotes(votes().filter((v) => v.id !== i.id))}
+                    setVotes(votes().filter((v) => v.id !== i.id))
+                  }
                 />
               </Match>
             </Switch>
@@ -226,15 +225,11 @@ const VoteSummary: Component<{
     <Match when={props.votes.length === 0}>
       <div class="mt-3 text-center">
         <h3 class="mb-1 text-red-800 font-bold">No votes!</h3>
-        <p class="text-sm text-gray-700">
-          Vote for {MAX_VOTE_COUNT} songs plz
-        </p>
+        <p class="text-sm text-gray-700">Vote for {MAX_VOTE_COUNT} songs plz</p>
       </div>
     </Match>
 
-    <Match
-      when={props.votes.length > 0}
-    >
+    <Match when={props.votes.length > 0}>
       <div class="mt-3 text-center">
         <h3 class="mb-3">Current Votes</h3>
 
@@ -246,9 +241,10 @@ const VoteSummary: Component<{
   </Switch>
 );
 
-const SummaryList: Component<
-  { votes: Array<YoutubeItem>; remove(i: YoutubeItem): void }
-> = (props) => (
+const SummaryList: Component<{
+  votes: Array<YoutubeItem>;
+  remove(i: YoutubeItem): void;
+}> = (props) => (
   <For each={props.votes}>
     {(i) => (
       <div class="flex justify-center items-center mb-2">
@@ -265,12 +261,8 @@ const SummaryList: Component<
             overflow: "hidden",
             "text-overflow": "ellipsis",
           }}
-          innerHTML={i.title.replace(/\(.*\)$/, "").replace(
-            /MUSIC|VIDEO/g,
-            "",
-          )}
-        >
-        </div>
+          innerHTML={i.title.replace(/\(.*\)$/, "").replace(/MUSIC|VIDEO/g, "")}
+        ></div>
       </div>
     )}
   </For>

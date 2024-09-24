@@ -22,8 +22,7 @@ async function queryYoutube(search: string) {
   up.append("type", "video");
   up.append("key", import.meta.env.YOUTUBE_API_KEY);
 
-  const url = "https://www.googleapis.com/youtube/v3/search?" +
-    up.toString();
+  const url = "https://www.googleapis.com/youtube/v3/search?" + up.toString();
 
   console.log(url);
   const res = await fetch(url);
@@ -47,46 +46,46 @@ async function queryYoutube(search: string) {
 }
 
 type YoutubeResponse = {
-  "kind": string;
-  "etag": string;
-  "nextPageToken": string;
-  "regionCode": string;
-  "pageInfo": {
-    "totalResults": number;
-    "resultsPerPage": number;
+  kind: string;
+  etag: string;
+  nextPageToken: string;
+  regionCode: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
   };
-  "items": Array<{
-    "kind": string;
-    "etag": string;
-    "id": {
-      "kind": string;
-      "videoId": string;
+  items: Array<{
+    kind: string;
+    etag: string;
+    id: {
+      kind: string;
+      videoId: string;
     };
-    "snippet": {
-      "publishedAt": string;
-      "channelId": string;
-      "title": string;
-      "description": string;
-      "thumbnails": {
-        "default": {
-          "url": string;
-          "width": 120;
-          "height": 90;
+    snippet: {
+      publishedAt: string;
+      channelId: string;
+      title: string;
+      description: string;
+      thumbnails: {
+        default: {
+          url: string;
+          width: 120;
+          height: 90;
         };
-        "medium": {
-          "url": string;
-          "width": 320;
-          "height": 180;
+        medium: {
+          url: string;
+          width: 320;
+          height: 180;
         };
-        "high": {
-          "url": string;
-          "width": 480;
-          "height": 360;
+        high: {
+          url: string;
+          width: 480;
+          height: 360;
         };
       };
-      "channelTitle": string;
-      "liveBroadcastContent": string;
-      "publishTime": string;
+      channelTitle: string;
+      liveBroadcastContent: string;
+      publishTime: string;
     };
   }>;
 };

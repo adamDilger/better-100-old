@@ -39,8 +39,8 @@ export default function Player(props: { eventCode: string }) {
         enablejsapi: 1,
       },
       events: {
-        "onReady": () => setPlayerReady(true),
-        "onStateChange": onPlayerStateChange,
+        onReady: () => setPlayerReady(true),
+        onStateChange: onPlayerStateChange,
       },
     });
   }
@@ -95,12 +95,12 @@ export default function Player(props: { eventCode: string }) {
 
     speechSynthesis.speak(msg);
 
-    await (new Promise<void>((res) => {
+    await new Promise<void>((res) => {
       msg.onend = function (e) {
         console.log("Finished in " + e.elapsedTime + " seconds.");
         res();
       };
-    }));
+    });
   }
 
   return (

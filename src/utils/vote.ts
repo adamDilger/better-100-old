@@ -12,27 +12,24 @@ export type PlayerVote = {
 };
 
 export async function getNextVote(eventCode: string): Promise<PlayerVote> {
-  const votes = await db.select({
-    id: Vote.id,
-    title: Vote.title,
-    videoId: Vote.videoId,
-    thumbnailUrl: Vote.thumbnailUrl,
-    thumbnailLgUrl: Vote.thumbnailLgUrl,
-    personName: Person.name,
-  })
+  const votes = await db
+    .select({
+      id: Vote.id,
+      title: Vote.title,
+      videoId: Vote.videoId,
+      thumbnailUrl: Vote.thumbnailUrl,
+      thumbnailLgUrl: Vote.thumbnailLgUrl,
+      personName: Person.name,
+    })
     .from(Vote)
     .innerJoin(Person, eq(Vote.personId, Person.id))
     .innerJoin(Event, eq(Vote.eventId, Event.id))
-    .where(
-      and(
-        isNull(Vote.playedOn),
-        eq(Event.code, eventCode.toUpperCase()),
-      ),
-    )
+    .where(and(isNull(Vote.playedOn), eq(Event.code, eventCode.toUpperCase())))
     .limit(1)
     .orderBy(Vote.sort);
 
-  const currentCount = await db.select({ count: count() })
+  const currentCount = await db
+    .select({ count: count() })
     .from(Vote)
     .where(isNull(Vote.playedOn));
 
@@ -40,7 +37,8 @@ export async function getNextVote(eventCode: string): Promise<PlayerVote> {
 }
 
 export function markComplete(id: number) {
-  return db.update(Vote)
+  return db
+    .update(Vote)
     .set({ playedOn: new Date() })
     .where(eq(Vote.id, id))
     .run();
