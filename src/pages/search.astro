@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SearchCodeForm from "../components/SearchCodeForm.tsx";
+---
+
+<Layout title="better 100">
+	<h2 class="text-center text-2xl font-light pt-10 pb-8">
+		Host your own <span class=""><s>Hottest</s></span> Better 100
+	</h2>
+
+	<SearchCodeForm client:only="solid-js" />
+</Layout>

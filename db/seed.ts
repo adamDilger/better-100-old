@@ -1,13 +1,13 @@
-import { db, Event, Person, Vote } from "astro:db";
+import { db, Event } from "astro:db";
 
 // https://astro.build/db/seed
 export default async function seed() {
-  await db.insert(Event).values([
-    { id: 1, code: "ABCDE", name: `Alex's Bucks` },
-  ]);
+  await db
+    .insert(Event)
+    .values([{ id: 1, code: "KHCY", name: `Alex's Bucks` }]);
 
-  await db.insert(Person).values([]);
-  await db.insert(Vote).values([]);
+  // await db.insert(Person).values([]);
+  // await db.insert(Vote).values([]);
 }
 
 // {
