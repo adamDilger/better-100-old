@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import YtPlayer from "../../components/YtPlayer.tsx";
+
+import { db, eq, Countdown as _Countdown } from "astro:db";
+
+const { countdownCode } = Astro.params;
+
+const countdowns = await db
+	.select({ name: _Countdown.name, started: _Countdown.started })
+  .from(_Countdown)
+	.where(eq(_Countdown.code, Astro.params.countdownCode!));
+const countdown = countdowns[0];
+
+if (!countdown) {
+  Astro.response.status = 404;
+	return;
+}
+
+if (countdown.started) {
+	Astro.response.status = 302;
+	Astro.response.headers.set("Location", `/countdown/${countdownCode}`);
+	return;
+}
+
+---
+
+<Layout title="better 100" container={false}>
+  <h2 class="text-center text-1xl font-light pt-10">{countdown.name}</h2>
+
+  <YtPlayer client:only="solid-js" countdownCode={countdownCode!} />
+</Layout>
+
+<script>
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName("script")[0];
+  firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
+</script>
+
+<style is:global>
+  .number-overlay {
+    height: 80vh;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s;
+  }
+
+  .number-overlay.showing {
+    opacity: 1;
+    transition: opacity 0s;
+  }
+</style>

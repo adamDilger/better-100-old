@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { db, eq, Event } from "astro:db";
+import { db, eq, Countdown } from "astro:db";
 
 export const GET: APIRoute = async ({ url }) => {
   const search = new URL(url).searchParams.get("code");
@@ -10,10 +10,16 @@ export const GET: APIRoute = async ({ url }) => {
     });
   }
 
+  if (search.length !== 4) {
+    return new Response(JSON.stringify({ message: "Invalid code length" }), {
+      status: 400,
+    });
+  }
+
   let res = await db
-    .select({ name: Event.name, code: Event.code })
-    .from(Event)
-    .where(eq(Event.code, search));
+    .select({ name: Countdown.name, code: Countdown.code })
+    .from(Countdown)
+    .where(eq(Countdown.code, search));
 
   if (res.length === 0) {
     return new Response(JSON.stringify({ message: "Code not found" }), {

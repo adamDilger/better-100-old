@@ -19,7 +19,7 @@ const MAX_VOTE_COUNT = 3;
 
 let nameInput: HTMLInputElement | undefined;
 
-export default function Form(props: { eventCode: string }) {
+export default function Form(props: { countdownCode: string }) {
   const [error, setError] = createSignal<string | null>(null);
   const [searching, setSearching] = createSignal(false);
   const [search, setSearch] = createSignal("");
@@ -67,7 +67,7 @@ export default function Form(props: { eventCode: string }) {
 
   async function submitVotes() {
     setSubmitting(true);
-    const res = await fetch(`/api/${props.eventCode}/votes.json`, {
+    const res = await fetch(`/api/${props.countdownCode}/votes.json`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -85,7 +85,7 @@ export default function Form(props: { eventCode: string }) {
     }
 
     window.localStorage.setItem("voted", "true");
-    navigate(`/${props.eventCode}/tnx`);
+    navigate(`/${props.countdownCode}/tnx`);
   }
 
   return (

@@ -1,27 +1,27 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 
-const eventCode = Astro.params.eventCode as string;
+const countdownCode = Astro.params.countdownCode as string;
 ---
 
 <Layout title="better 100">
   <div class="mx-8">
-    <h2 class="text-center text-2xl font-light pt-10 pb-4">Event created!</h2>
+    <h2 class="text-center text-2xl font-light pt-10 pb-4">Countdown created!</h2>
 
     <div class="text-center text-2xl font-light pt-8 pb-4">
-      Your event code is: <span class="text-red-500 font-bold">{eventCode}</span
+      Your Countdown code is: <span class="text-red-500 font-bold">{countdownCode}</span
       >
     </div>
 
     <div class="text-center pt-4 pb-4">
-      Make sure to save your event code somewhere, as that's what you'll have to
+      Make sure to save your Countdown code somewhere, as that's what you'll have to
       use to start the countdown.
     </div>
 
     <div class="text-center">
       <h3 class="text-lg mt-3 mb-4">Voting Link:</h3>
 
-      <span class="underline italic">better100.dilger.co/{eventCode}/vote</span>
+      <span class="underline italic">better100.dilger.co/{countdownCode}/vote</span>
       <button
         id="copy-to-clipboard"
         class="bg-cyan-700 px-2 py-1 text-white rounded ml-2">Copy</button
@@ -32,7 +32,7 @@ const eventCode = Astro.params.eventCode as string;
       <div class="mb-4">When you're ready to start the countdown</div>
 
       <span class="underline italic"
-        >better100.dilger.co/{eventCode}/countdown</span
+        >better100.dilger.co/{countdownCode}/countdown</span
       >
       <button
         id="copy-to-clipboard"
@@ -41,12 +41,12 @@ const eventCode = Astro.params.eventCode as string;
     </div>
   </div>
 
-  <script define:vars={{ eventCode }} is:inline>
+  <script define:vars={{ countdownCode }} is:inline>
     const copyButton = document.getElementById("copy-to-clipboard");
 
     copyButton.addEventListener("click", async () => {
       await navigator.clipboard.writeText(
-        `https://better100.dilger.co/${eventCode}/vote`,
+        `https://better100.dilger.co/${countdownCode}/vote`,
       );
       copyButton.textContent = "Copied!";
     });

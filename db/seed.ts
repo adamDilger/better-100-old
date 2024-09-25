@@ -1,9 +1,9 @@
-import { db, Event } from "astro:db";
+import { db, Countdown } from "astro:db";
 
 // https://astro.build/db/seed
 export default async function seed() {
   await db
-    .insert(Event)
+    .insert(Countdown)
     .values([{ id: 1, code: "KHCY", name: `Alex's Bucks` }]);
 
   // await db.insert(Person).values([]);

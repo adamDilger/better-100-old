@@ -11,7 +11,7 @@ type PlayerVote = {
   count: number;
 };
 
-export default function Player(props: { eventCode: string }) {
+export default function Player(props: { countdownCode: string }) {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [countdownStarted, setCountdownStarted] = createSignal(false);
   const [voteCount, setVoteCount] = createSignal(0);
@@ -60,13 +60,13 @@ export default function Player(props: { eventCode: string }) {
   }
 
   async function firstSong() {
-    const res = await fetch(`/api/player/${props.eventCode}/next.json`);
+    const res = await fetch(`/api/player/${props.countdownCode}/next.json`);
     const data = await res.json();
     update(data);
   }
 
   async function markComplete(): Promise<PlayerVote> {
-    const res = await fetch(`/api/player/${props.eventCode}/complete.json`);
+    const res = await fetch(`/api/player/${props.countdownCode}/complete.json`);
     const data = await res.json();
     return data;
   }
@@ -77,6 +77,12 @@ export default function Player(props: { eventCode: string }) {
   }
 
   async function update(vote: PlayerVote) {
+    if (!vote || vote.count === 0) {
+      setCountdownStarted(false);
+      alert("No votes left!");
+      return;
+    }
+
     setVoteCount(vote.count);
     setVotePersonName(vote.personName);
 

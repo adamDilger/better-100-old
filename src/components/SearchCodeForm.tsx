@@ -6,16 +6,12 @@ export default function SearchCodeForm() {
   const [error, setError] = createSignal<string | null>(null);
 
   async function onSubmit(e: SubmitEvent) {
-    setError(null);
-
     e.preventDefault();
-    console.log(e);
 
+    setError(null);
     setSearching(true);
-    // // get data from the form
+
     const formData = new FormData(e.target as HTMLFormElement);
-    console.log(formData);
-    console.log(formData.get("code"));
 
     try {
       const res = await fetch(
@@ -23,7 +19,7 @@ export default function SearchCodeForm() {
       );
 
       if (res.status === 404) {
-        setError("Code not found");
+        setError(`Code ${code()} not found`);
         setSearching(false);
         return;
       }
@@ -46,7 +42,7 @@ export default function SearchCodeForm() {
   }
 
   return (
-    <div class="gap-5 px-8 text-center">
+    <div class="gap-5 pt-4 px-8 text-center">
       <div class="flex md:flex-row justify-center gap-6 flex-col mb-4">
         What's the code to your better 100 countdown?
       </div>
@@ -64,7 +60,7 @@ export default function SearchCodeForm() {
           class="p-2 rounded flex-1 border-2 border-gray-300"
           value={code()}
           onChange={(e) => setCode((e.target as HTMLInputElement).value)}
-          autocomplete="eventCode"
+          autocomplete="countdownCode"
         />
 
         <button

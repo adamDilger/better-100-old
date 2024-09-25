@@ -1,16 +1,16 @@
 ---
-import { db, Event } from "astro:db";
+import { db, Countdown } from "astro:db";
 import Layout from "../layouts/Layout.astro";
 
 if (Astro.request.method === "POST") {
-  let eventName = "";
+  let countdownName = "";
   let maxVoteCount = 5;
 
   try {
     const data = await Astro.request.formData();
-    const n = data.get("eventName");
+		const n = data.get("countdownName");
     if (!n || typeof n !== "string" || n.length < 4 || n.length > 30) {
-      throw new Error("Invalid event name");
+      throw new Error("Invalid countdown name");
     }
 
     const mvc = data.get("maxVoteCount");
@@ -18,7 +18,7 @@ if (Astro.request.method === "POST") {
       throw new Error("Invalid max vote count");
     }
 
-    eventName = n;
+    countdownName = n;
     maxVoteCount = parseInt(mvc, 10);
 
     if (isNaN(maxVoteCount) || maxVoteCount < 1 || maxVoteCount > 10) {
@@ -36,13 +36,13 @@ if (Astro.request.method === "POST") {
   const code = makeCode();
   try {
     await db
-      .insert(Event)
-      .values({ code, name: eventName, maxVoteCount: maxVoteCount })
+      .insert(Countdown)
+      .values({ code, name: countdownName, maxVoteCount: maxVoteCount })
       .execute();
-    console.log("Event created:", eventName, code);
+    console.log("Countdown created:", countdownName, code);
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Failed to create event: ${eventName}`, error.message);
+      console.error(`Failed to create countdown: ${countdownName}`, error.message);
     }
 
     Astro.response.status = 500;
@@ -73,8 +73,8 @@ function makeCode(length = 5) {
   <form class="flex flex-col gap-4 justify-center mx-8" method="POST">
     <input
       class="py-2 px-2 border rounded"
-      name="eventName"
-      placeholder="Event name"
+      name="countdownName"
+      placeholder="Countdown name"
       required
       maxlength="30"
       minlength="4"
@@ -83,7 +83,7 @@ function makeCode(length = 5) {
     <input
       class="px-2 border rounded hidden"
       name="maxVoteCount"
-      placeholder="Event name"
+      placeholder="Countdown name"
       type="number"
       value="5"
       required
@@ -116,7 +116,7 @@ function makeCode(length = 5) {
         class="bg-red-500 px-12 py-2 rounded border-red-700 text-red-100 font-bold"
         type="submit"
       >
-        Create event
+        Create Countdown
       </button>
     </div>
   </form>

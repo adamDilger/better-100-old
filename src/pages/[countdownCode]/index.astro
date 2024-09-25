@@ -1,17 +1,16 @@
 ---
-import { db, Vote, Person } from "astro:db";
+import { db, Vote, Person, Countdown } from "astro:db";
 import Layout from "../../layouts/Layout.astro";
 import { isNotNull, eq } from "astro:db";
 import { desc } from "astro:db";
-import { Event } from "astro:db";
 
-const events = await db
-  .select({ name: Event.name, started: Event.started })
-  .from(Event)
-  .where(eq(Event.id, 1));
-const event = events[0];
+const countdowns = await db
+  .select({ name: Countdown.name, started: Countdown.started })
+  .from(Countdown)
+	.where(eq(Countdown.code, Astro.params.countdownCode!));
+const countdown = countdowns[0];
 
-if (!event) {
+if (!countdown) {
   Astro.response.status = 404;
 }
 
@@ -28,11 +27,11 @@ const played = await db
 ---
 
 <Layout title="better 100">
-  <h2 class="text-center text-1xl font-light pt-10">{event.name}</h2>
+  <h2 class="text-center text-1xl font-light pt-10">{countdown.name}</h2>
 
   <div class="divide-y divide-red-400 gap-5 px-8">
     {
-      !event.started ? (
+      !countdown.started ? (
         <div class="text-center text-2xl font-light pt-6 pb-4">
           Countdown not started
         </div>

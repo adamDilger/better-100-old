@@ -1,13 +1,15 @@
 import { column, defineDb, defineTable } from "astro:db";
 
-const Event = defineTable({
+const Countdown = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     code: column.text(),
     name: column.text(),
     started: column.date({ optional: true }),
     maxVoteCount: column.number({ default: 5 }),
+    password: column.text({ optional: true }),
   },
+  indexes: [{ on: ["code"], unique: true }],
 });
 
 const Person = defineTable({
@@ -20,7 +22,7 @@ const Person = defineTable({
 const Vote = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
-    eventId: column.number({ references: () => Event.columns.id }),
+    countdownId: column.number({ references: () => Countdown.columns.id }),
     personId: column.number({ references: () => Person.columns.id }),
     title: column.text(),
     videoId: column.text(),
@@ -34,7 +36,7 @@ const Vote = defineTable({
 // https://astro.build/db/config
 export default defineDb({
   tables: {
-    Event,
+    Countdown,
     Person,
     Vote,
   },

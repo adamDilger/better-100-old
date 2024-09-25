@@ -10,6 +10,13 @@ export const GET: APIRoute = async ({ url }) => {
     );
   }
 
+  if (search.length > 50) {
+    return new Response(
+      JSON.stringify({ message: "Search longer than 50 characters" }),
+      { status: 400 },
+    );
+  }
+
   const data = await queryYoutube(search);
 
   return new Response(JSON.stringify(data));

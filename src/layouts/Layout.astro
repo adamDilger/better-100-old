@@ -1,42 +1,46 @@
 ---
 interface Props {
-  title: string;
+	title: string;
+	container?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, container = true } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
 
-  <body class="bg-red-50">
-    <main class="flex flex-col container mx-auto h-full py-7">
-      <a href="/">
-        <img
-          src="/better100.svg"
-          alt="better logo"
-          class="mx-auto"
-          style="width: 200px"
-        />
-      </a>
-      <slot />
-    </main>
-  </body>
+	<body class="bg-red-50">
+		<main
+			class="flex flex-col mx-auto h-full py-7"
+			class:list={container ? "max-w-xl" : ""}
+		>
+			<a href="/">
+				<img
+					src="/better100.svg"
+					alt="better logo"
+					class="mx-auto"
+					style="width: 200px"
+				/>
+			</a>
+			<slot />
+		</main>
+	</body>
 </html>
 
 <style is:global>
-  root,
-  body,
-  html,
-  main {
-    height: 100%;
-  }
+	root,
+	body,
+	html,
+	main {
+		height: 100%;
+	}
 </style>

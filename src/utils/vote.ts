@@ -1,4 +1,4 @@
-import { and, count, db, eq, Event, isNull, Person, Vote } from "astro:db";
+import { and, count, db, eq, Countdown, isNull, Person, Vote } from "astro:db";
 
 export type PlayerVote = {
   id: number;
@@ -11,7 +11,7 @@ export type PlayerVote = {
   count: number;
 };
 
-export async function getNextVote(eventCode: string): Promise<PlayerVote> {
+export async function getNextVote(countdownCode: string): Promise<PlayerVote> {
   const votes = await db
     .select({
       id: Vote.id,
@@ -23,8 +23,13 @@ export async function getNextVote(eventCode: string): Promise<PlayerVote> {
     })
     .from(Vote)
     .innerJoin(Person, eq(Vote.personId, Person.id))
-    .innerJoin(Event, eq(Vote.eventId, Event.id))
-    .where(and(isNull(Vote.playedOn), eq(Event.code, eventCode.toUpperCase())))
+    .innerJoin(Countdown, eq(Vote.countdownId, Countdown.id))
+    .where(
+      and(
+        isNull(Vote.playedOn),
+        eq(Countdown.code, countdownCode.toUpperCase()),
+      ),
+    )
     .limit(1)
     .orderBy(Vote.sort);
 
