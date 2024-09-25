@@ -1,6 +1,6 @@
 ---
-import { db, Countdown } from "astro:db";
 import Layout from "../layouts/Layout.astro";
+import { createCountdown } from "../utils/countdown";
 
 if (Astro.request.method === "POST") {
   let countdownName = "";
@@ -33,35 +33,13 @@ if (Astro.request.method === "POST") {
     return;
   }
 
-  const code = makeCode();
   try {
-    await db
-      .insert(Countdown)
-      .values({ code, name: countdownName, maxVoteCount: maxVoteCount })
-      .execute();
-    console.log("Countdown created:", countdownName, code);
+		const code = await createCountdown(countdownName, maxVoteCount);
+	  return Astro.redirect(`${code}/new`);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Failed to create countdown: ${countdownName}`, error.message);
-    }
-
     Astro.response.status = 500;
     return;
   }
-
-  return Astro.redirect(`${code}/new`);
-}
-
-function makeCode(length = 5) {
-  let result = "";
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const charactersLength = characters.length;
-
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return result;
 }
 ---
 
@@ -100,20 +78,20 @@ function makeCode(length = 5) {
         <button
           id="decrease"
           type="button"
-          class="h-10 w-10 bg-gray-200 rounded">-</button
+          class="h-10 w-10 bg-gray-200 active:bg-gray-300 rounded">-</button
         >
         <div id="max-votes" class="text-4xl font-bold px-8">5</div>
         <button
           id="increase"
           type="button"
-          class="h-10 w-10 bg-gray-200 rounded">+</button
+          class="h-10 w-10 bg-gray-200 active:bg-gray-300 rounded">+</button
         >
       </div>
     </div>
 
     <div class="text-center">
       <button
-        class="bg-red-500 px-12 py-2 rounded border-red-700 text-red-100 font-bold"
+        class="bg-red-500 active:bg-red-600 px-12 py-2 rounded border-red-700 text-red-50 font-bold"
         type="submit"
       >
         Create Countdown
